@@ -33,7 +33,7 @@ Frontend for the voting application with admin and user roles, event management,
 - View detailed voting results
 - Manage user accounts
 - Update event status (active/closed)
-- 
+  
 ### User Features:
 - Vote on active events
 - Add custom voting options (if allowed)
