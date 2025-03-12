@@ -11,7 +11,7 @@ Frontend for the voting application with admin and user roles, event management,
 
 1. Navigate to the frontend directory:
     ```sh
-    cd frontend
+    cd Voting-Frontend
     ```
 2. Install the dependencies:
     ```sh
