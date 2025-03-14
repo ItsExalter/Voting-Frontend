@@ -92,17 +92,21 @@ const PollDetails = () => {
             >
               <CloseIcon />
             </IconButton>
-            <Typography variant="h4" component="h2" gutterBottom>
-              {selectedEvent.title}
+            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
+              Event Title: <Typography component="span" variant="h4" sx={{ fontWeight: 'normal', textTransform:'capitalize' }}>{selectedEvent.title}</Typography>
             </Typography>
-            <Typography variant="body1" paragraph>
-              {selectedEvent.description}
+            <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+              Description: <br />
+              <Typography component="span" variant="body1" sx={{ fontWeight: 'normal', fontStyle: 'italic' }}>{selectedEvent.description}</Typography>
             </Typography>
-            <Typography variant="body2" color="textSecondary" paragraph>
-              Status: {selectedEvent.status}
+            <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold', mb: 0 }}>
+              Status: <Typography component="span" variant="body2" sx={{ fontWeight: 'normal', textTransform:'capitalize' }}>{selectedEvent.status}</Typography>
             </Typography>
-            <Typography variant="body2" color="textSecondary" paragraph>
-              Options: {selectedEvent.options.join(', ')}
+            <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold', mb: 0 }}>
+              Anonymity: <Typography component="span" variant="body2" sx={{ fontWeight: 'normal', textTransform:'capitalize' }}>{selectedEvent.isAnonymous ? "Not Anonym" : "Anonym"}</Typography>
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold', mb: 2 }}>
+              Options: <Typography component="span" variant="body2" sx={{ fontWeight: 'normal', textTransform:'capitalize' }}>{selectedEvent.options.join(', ')}</Typography>
             </Typography>
             {/* Fetch and display vote results */}
             <VoteResults eventId={selectedEvent._id} isAnonymous={selectedEvent.isAnonymous} />
@@ -128,35 +132,61 @@ const VoteResults = ({ eventId, isAnonymous }) => {
   }, [eventId]);
 
   if (!results) return null;
-
-  const data = {
-    labels: results.summary.map(result => result.option),
-    datasets: [
-      {
-        label: 'Votes',
-        data: results.summary.map(result => result.count),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1
-      }
-    ]
-  };
-
-  return (
-    <Box>
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      <Typography variant="h6">Vote Results</Typography>
-      <Bar data={data} />
-      {!isAnonymous && (
+  
+  let data = null;
+  if (!isAnonymous) {
+    if (results.summary) {
+      data = {
+        labels: results.summary.map(result => result.option),
+        datasets: [
+          {
+            label: 'Votes',
+            data: results.summary.map(result => result.count),
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }
+        ]
+      };
+    }
+    
+    return (
+      <Box>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        <Typography variant="h6">Vote Results</Typography>
+        {data && <Bar data={data} />}
         <Box>
           <Typography variant="h6">Voters</Typography>
           {results.details.map(detail => (
             <Typography key={detail.timestamp} variant="body2">{detail.voter}: {detail.option} at {new Date(detail.timestamp).toLocaleString()}</Typography>
           ))}
         </Box>
-      )}
-    </Box>
-  );
+      </Box>
+    );
+  } else {
+    data = {
+      labels: results.map(result => result.option),
+      datasets: [
+        {
+          label: 'Votes',
+          data: results.map(result => result.count),
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }
+      ]
+    };
+
+    return (
+      <Box>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        <Typography variant="h6">Vote Results</Typography>
+        {data && <Bar data={data} />}
+      </Box>
+    );
+  }
+
+  
 };
 
 export default PollDetails;
